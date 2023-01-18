@@ -20,6 +20,7 @@ class Room(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     max_occupancy = models.PositiveSmallIntegerField()
     availability = models.BooleanField(default=True)
+    # image = models.URLField()
 
     def __str__(self):
         return f"{self.room_number}"
@@ -36,6 +37,7 @@ class Menu(models.Model):
     name = models.CharField(max_length=20)
     price = models.PositiveIntegerField()
     description = models.CharField(max_length=100)
+    # image = models.URLField()
 
     def __str__(self):
         return f'{self.name}'
