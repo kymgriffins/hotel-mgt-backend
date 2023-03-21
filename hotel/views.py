@@ -55,13 +55,13 @@ def reservation_list(request):
     if request.method == "GET":
         reservations = Reservation.objects.all()
         serializer = ReservationSerializer(reservations, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = ReservationSerializer(data=data)
+        print(request.data)
+        serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data,status= status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET','PUT','PATCH','DELETE'])
 def reservation_details(request, pk):

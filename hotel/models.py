@@ -8,6 +8,12 @@ class Role(models.Model):
         return self.name
 
 
+class Image(models.Model):
+    name = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return self.name
 
 class Room(models.Model):
     AVAILABILITY_CHOICES = (
@@ -20,7 +26,9 @@ class Room(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     max_occupancy = models.PositiveSmallIntegerField()
     availability = models.BooleanField(default=True)
-    # image = models.URLField()
+    images = models.ImageField(upload_to='rooms/', null=True, blank=True, verbose_name='')
+
+    # image = models.URLField() + change availability to choices
 
     def __str__(self):
         return f"{self.room_number}"
@@ -37,6 +45,8 @@ class Menu(models.Model):
     name = models.CharField(max_length=20)
     price = models.PositiveIntegerField()
     description = models.CharField(max_length=100)
+    images = models.ImageField(upload_to='menus/', null=True, blank=True, verbose_name='')
+
     # image = models.URLField()
 
     def __str__(self):
