@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
-
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,7 +45,8 @@ INSTALLED_APPS = [
     "corsheaders",
     'rest_framework',
     'hotel',
-    'accounts'
+    'accounts',
+    'cloudinary'
 
 ]
 
@@ -156,4 +159,12 @@ SECURE_SSL_REDIRECT = False
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
   'http://localhost:3000',
+)
+
+
+cloudinary.config(
+  cloud_name = "dj9cp8xcv",
+  api_key = "317344648845814",
+  api_secret = "4kwI_oxmEGzk8jSRRNIqZzsNxNo",
+  secure = True
 )

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Role, User, Menu, Order, Reservation, Room, Image
+from .models import *
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,62 +17,63 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
         user.save()
         return user
-class ImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Image
-        fields = '__all__'
-class RoomSerializer(serializers.ModelSerializer):
-    # images = ImageSerializer(many=True, read_only=True)
 
-    class Meta:
-        model = Room
-        fields = '__all__'
-        depth = 1
-        
+
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ['id', 'name', 'image']
 
+
+class RoomSerializer(serializers.ModelSerializer):
+  
+    class Meta:
+        model = Room
+        fields = '__all__'
+        depth = 1
+
+
 class ReservationSerializer(serializers.ModelSerializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    room = serializers.PrimaryKeyRelatedField(queryset=Reservation.objects.all())
+    room = serializers.PrimaryKeyRelatedField(queryset=Room.objects.all())
 
     class Meta:
         model = Reservation
-        fields = ['id','room', 'check_in_date', 'check_out_date', 'customer']
+        fields = ['id', 'room', 'check_in_date', 'check_out_date', 'customer']
         depth = 1
 
     def create(self, validated_data):
-        # Get the user ID from the validated data
-        user_id = validated_data.pop('customer').id
-        room_id = validated_data.pop('room').id
+        # Get the user and room objects from the validated data
+        customer = validated_data.pop('customer')
+        room = validated_data.pop('room')
 
-        # Create the reservation with the user ID
-        reservation = Reservation.objects.create(customer_id=user_id,room_id=room_id, **validated_data)
+        # Create the reservation object with the user and room objects
+        reservation = Reservation.objects.create(customer=customer, room=room, **validated_data)
 
         return reservation
+
 
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
-        fields = ['id', 'name', 'price', 'description', 'images']
-        depth =1
+        fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
-    customer = UserSerializer(read_only=True)
-    food = MenuSerializer(many=True, read_only=True)
-    
     class Meta:
         model = Order
-        fields = ['id', 'food', 'customer', 'ordered_time', 'quantity', 'status']
-        depth = 1
+        fields = '__all__'
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = '__all__'
+
 
 
 
 class RoleSerializer(serializers.ModelSerializer):
     users = UserSerializer(many=True)
-    
+
     class Meta:
         model = Role
         fields = ['id', 'name', 'users']

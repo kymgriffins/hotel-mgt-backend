@@ -1,11 +1,9 @@
 from django.urls import path
+from . import views
 
-from . import views 
-
-
-
-urlpatterns =[
+urlpatterns = [
     path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('rooms/', views.room_list, name='room-list'),
     path('room/<int:pk>/', views.room_details, name='room-details'),
     path('reservations/', views.reservation_list, name='reservation-list'),
@@ -14,4 +12,6 @@ urlpatterns =[
     path('menu/<int:pk>/', views.menu_details, name='menu-details'),
     path('orders/', views.order_list, name='order-list'),
     path('orders/<int:pk>/', views.order_details, name='orders-details'),
+    path('orders/<int:order_pk>/items/', views.add_order_item, name='add-order-item'),
+    path('orders/<int:order_pk>/items/<int:item_pk>/', views.order_item_details, name='order-item-details'),
 ]
