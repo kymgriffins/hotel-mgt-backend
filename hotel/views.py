@@ -149,17 +149,17 @@ def order_details(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
-def add_order_item(request, order_pk):
-    try:
-        order = Order.objects.get(pk=order_pk)
-    except Order.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    serializer = OrderItemSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(order=order)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def add_order_item(request):
+    if request.method == "GET":
+        orders = OrderItem.objects.all()
+        serializer = OrderItemSerializer(orders, many=True)
+        return Response(serializer.data)
+    elif request.method == "POST":
+        serializer = OrderItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def order_item_details(request, order_pk, item_pk):
@@ -183,17 +183,6 @@ def order_item_details(request, order_pk, item_pk):
     elif request.method == 'DELETE':
         item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = '__all__'
-
-class OrderItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderItem
-        fields = '__all__'
 
 
 #MENUS 
@@ -233,38 +222,81 @@ def menu_details(request, pk):
 
     
 @api_view(['GET', 'POST'])
-def image_list(request):
+def room_images(request):
     if request.method == 'GET':
-        images = Image.objects.all()
-        serializer = ImageSerializer(images, many=True)
+        images = RoomImage.objects.all()
+        serializer = RoomImageSerializer(images, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
-        serializer = ImageSerializer(data=request.data)
+        serializer = RoomImageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-def image_detail(request, pk):
+def room_image_detail(request, pk):
     try:
-        image = Image.objects.get(pk=pk)
-    except Image.DoesNotExist:
+        image = RoomImage.objects.get(pk=pk)
+    except RoomImage.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = ImageSerializer(image)
+        serializer = RoomImageSerializer(image)
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = ImageSerializer(image, data=request.data)
+        serializer = RoomImageSerializer(image, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'PATCH':
-        serializer = ImageSerializer(image, data=request.data, partial=True)
+        serializer = RoomImageSerializer(image, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+        
+@api_view(['GET', 'POST'])
+def menu_images(request):
+    if request.method == 'GET':
+        images = MenuImage.objects.all()
+        serializer =MenuImageSerializer(images, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = MenuImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+def menu_image_detail(request, pk):
+    try:
+        image = MenuImage.objects.get(pk=pk)
+    except MenuImage.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = MenuImageSerializer(image)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = MenuImageSerializer(image, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'PATCH':
+        serializer = MenuImageSerializer(image, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
